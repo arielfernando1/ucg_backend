@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       votantid: {
-        allowNull: false,  
+        allowNull: false,
         type: Sequelize.STRING,
       },
       createdAt: {

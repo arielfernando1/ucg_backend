@@ -14,9 +14,10 @@ module.exports = (sequelize, DataTypes) => {
   CandidateVotes.init(
     {
       candidateId: DataTypes.INTEGER,
-      votantid: {
+      votantId: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: true,
       },
     },
     {
