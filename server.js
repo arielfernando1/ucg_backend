@@ -1,19 +1,22 @@
-const { Candidate, CandidateVotes, sequelize } = require("./models");
+const { Candidate, Party, Vote, sequelize } = require("./models");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const cors = require("cors");
-
 app.use(express.json());
 app.use(
   cors({
     origin: "*",
   })
 );
-
-app.get("/api/candidates", async (req, res) => {
+// get candidates by party
+app.get("/api/candidates/:list", async (req, res) => {
   try {
-    const candidates = await Candidate.findAll();
+    const candidates = await Candidate.findAll({
+      where: {
+        party_id: req.params.list,
+      },
+    });
     res.json(candidates);
   } catch (error) {
     console.error(error);
@@ -39,17 +42,17 @@ app.post("/api/candidates/:id/vote", async (req, res) => {
       return res.status(404).json({ message: "Candidate not found" });
     }
     // a user can only vote once
-    const existingVote = await CandidateVotes.findOne({
-      where: {
-        votantId: req.body.votantId,
-      },
-    });
-    if (existingVote) {
-      return res.status(400).json({ message: "Ya has votado" });
-    }
-    const candidateVote = await CandidateVotes.create({
-      candidateId: candidate.id,
-      votantId: req.body.votantId,
+    // const existingVote = await CandidateVotes.findOne({
+    //   where: {
+    //     votantId: req.body.votantId,
+    //   },
+    // });
+    // if (existingVote) {
+    //   return res.status(400).json({ message: "Ya has votado" });
+    // }
+    const candidateVote = await Vote.create({
+      candidate_id: candidate.id,
+      votant_id: req.body.votantId,
     });
     res.json(candidateVote);
   } catch (error) {
@@ -64,12 +67,38 @@ app.get("/api/candidates/:id/votes", async (req, res) => {
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
-    const votes = await CandidateVotes.count({
+    const votes = await Vote.count({
       where: {
-        candidateId: candidate.id,
+        candidate_id: candidate.id,
       },
     });
     res.json({ votes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/api/:id/hasvoted/:party", async (req, res) => {
+  try {
+    const existingVoteInParty = await Vote.findOne({
+      where: {
+        votant_id: req.params.id,
+      },
+      include: [
+        {
+          model: Candidate,
+          where: {
+            party_id: req.params.party,
+          },
+        },
+      ],
+    });
+    if (existingVoteInParty) {
+      return res.status(200).json({ message: "Ya has votado" });
+    } else {
+      return res.status(404).json({ message: "No has votado" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

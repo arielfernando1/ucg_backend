@@ -15,24 +15,19 @@ module.exports = {
       photoUrl: {
         type: Sequelize.STRING
       },
-      party: {
-        type: Sequelize.STRING
-      },
-      list: {
-        type: Sequelize.STRING
-      },
       proposals: {
         type: Sequelize.TEXT
       },
+      party_id: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
-        allowNull: true,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+        allowNull: false,
+        type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: true,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+        allowNull: false,
+        type: Sequelize.DATE
       }
     });
   },

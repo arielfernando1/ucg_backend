@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "maria.db",
+    "username": "admin",
+    "password": "AllowLogin1242",
     "database": "ucsg",
-    "host": "127.0.0.1",
+    "host": "rdpsql.cll8uzvcassv.us-east-2.rds.amazonaws.com",
     "dialect": "mysql"
   },
   "test": {
